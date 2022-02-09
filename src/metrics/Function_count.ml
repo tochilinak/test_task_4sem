@@ -9,7 +9,11 @@ let metric_id = "function_count"
 
 let result = ref 0;;
 
-let update = fun () ->
+let reset () =
+  result := 0
+;;
+
+let update () =
   result := (!result) + 1
 ;;
 

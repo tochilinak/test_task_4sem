@@ -19,7 +19,10 @@ let build_iterator ~init ~compose ~f xs =
 let typed_on_structure info typedtree =
   build_iterator
     ~f:(fun o -> o.Tast_iterator.structure o)
-    ~compose:(fun (module L : METRIC.GENERAL) -> L.run info )
+    ~compose:(fun (module L : METRIC.GENERAL) ->
+        L.reset ();
+        L.run info
+    )
     ~init:Tast_iterator.default_iterator
     metrics
     typedtree;

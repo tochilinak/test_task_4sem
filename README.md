@@ -1,29 +1,13 @@
-[![Build Master](https://github.com/Kakadu/mylinter/actions/workflows/master.yml/badge.svg?branch=master)](https://github.com/Kakadu/mylinter/actions/workflows/master.yml)
+#### Тестовое задание для отбора на проект
 
-[![](http://github-actions.40ants.com/Kakadu/mylinter/matrix.svg)](https://github.com/Kakadu/mylinter)
+Программа анализирует проект на Ocaml, для каждого файла считая количество объявленных функций (включая те, что объявлены в let ... in).
 
-#### An OCaml linter experiment
+Функция типа `'a -> 'b -> 'c` включает в себя 2 функции: типа `('a) -> ('b -> 'c)` и `('b) -> ('c)` (частично примененная исходная функция).
 
-Mostly inspired by [How possible is a clippy-like linter for OCaml?](https://discuss.ocaml.org/t/how-possible-is-a-clippy-like-linter-for-ocaml)
+Если добавить флаг `-v`, перечислятся места объявления этих функций и их типы.
 
-Lints: https://kakadu.github.io/zanuda
+#### Запуск
 
-API: https://kakadu.github.io/mylinter/api/ is currently empty
+Принимается папка с dune-based проектом:
 
-##### See also
-
-* [Ocp-lint paper](https://hal.inria.fr/hal-01352013/document)
-* Lexifi's dead [dead_code_analyzer](https://github.com/LexiFi/dead_code_analyzer)
-* [Camelot](https://github.com/upenn-cis1xx/camelot)
-
-
-
-##### Developing
-
-Running a single test:
-
-    dune build && dune build @ifbool --force
-
-Running all tests:
-
-    dune build && dune runtest --force
+    linter <DIR> [-v]

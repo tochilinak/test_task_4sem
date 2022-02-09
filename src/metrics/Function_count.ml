@@ -14,7 +14,7 @@ let update = fun () ->
 ;;
 
 let collect_result = fun filename () ->
-  CollectedMetrics.add_result (filename ^ metric_id) !result
+  CollectedMetrics.add_result (filename ^ ":" ^ metric_id) !result
 ;;
 
 let run _ fallback =
@@ -35,7 +35,8 @@ let run _ fallback =
           ~on_error:(fun _desc () -> ())
           expr
           (fun x y () ->
-            let type_str = Format.asprintf "(:from: %a) -> (:to: %a)"
+            update ();
+            let type_str = Format.asprintf "(<from> %a) -> (<to> %a)"
               Printtyp.type_expr x
               Printtyp.type_expr y
             in
@@ -48,7 +49,6 @@ let run _ fallback =
                 !result (loc_printer ()) !result type_str
             in
               CollectedMetrics.add_note msg;
-            update ();
           )
           ();
         fallback.expr self expr)

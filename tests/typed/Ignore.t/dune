@@ -1,5 +1,0 @@
-(library
- (name test_Ignore)
- (wrapped false)
- (libraries base)
- (modules Ignore))

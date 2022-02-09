@@ -1,0 +1,8 @@
+(library
+ (name Metrics)
+ (libraries zanuda_core Tast_pattern)
+ (modules
+  Function_count)
+ (preprocess
+  (pps ppx_inline_test ppxlib.metaquot))
+ (inline_tests))

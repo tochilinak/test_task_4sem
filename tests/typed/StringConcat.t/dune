@@ -1,6 +1,0 @@
-(library
- (name test_string_concat)
- (modules StringConcat))
-
-(cram
- (deps %{bin:mylinter.exe}))

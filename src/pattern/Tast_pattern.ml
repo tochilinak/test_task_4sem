@@ -384,12 +384,10 @@ let tpat_any =
 let texp_ident (T fpath) =
   T
     (fun ctx loc x k ->
-      let __ _ = log "texp_ident %a\n%!" MyPrinttyped.expr x in
       match x.exp_desc with
       | Texp_ident (path, _, _) ->
         ctx.matched <- ctx.matched + 1;
         let ans = fpath ctx loc path k in
-        log "texp_ident + %a\n%!" MyPrinttyped.expr x;
         ans
       | _ -> fail loc "texp_ident")
 ;;
@@ -486,11 +484,30 @@ let texp_function (T fcases) =
       | _ -> fail loc "texp_function")
 ;;
 
+let pat_type =
+  T
+    (fun ctx _ { pat_type } k ->
+      ctx.matched <- ctx.matched + 1;
+      k pat_type)
+
+let exp_type =
+  T
+    (fun ctx _ { exp_type } k ->
+      ctx.matched <- ctx.matched + 1;
+      k exp_type)
+
 let case (T pat) (T guard) (T rhs) =
   T
     (fun ctx loc { c_lhs; c_rhs; c_guard } k ->
       k |> pat ctx loc c_lhs |> guard ctx loc c_guard |> rhs ctx loc c_rhs)
 ;;
+
+let first_case (T fcase) =
+  T
+    (fun ctx loc lst k ->
+      match lst with
+      | x::_ -> fcase ctx loc x k
+      | [] -> fail loc "first_case")
 
 let texp_match (T fexpr) (T fcases) =
   T

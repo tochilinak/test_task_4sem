@@ -124,11 +124,17 @@ val texp_apply_nolabelled
 
 val texp_function : (case_val list, 'a, 'b) t -> (expression, 'a, 'b) t
 
+val pat_type : (pattern, Types.type_expr -> 'a, 'a) t
+
+val exp_type : (expression, Types.type_expr -> 'a, 'a) t
+
 val case
   :  (pattern, 'a, 'b) t
   -> (expression option, 'b, 'c) t
   -> (expression, 'c, 'd) t
   -> (case_val, 'a, 'd) t
+
+val first_case : (case_val, 'a, 'b) t -> (case_val list, 'a, 'b) t
 
 val texp_match
   :  (expression, 'a, 'b) t

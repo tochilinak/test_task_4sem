@@ -3,41 +3,37 @@ open Caml.Format
 
 type mode =
   | Unspecified
-  | Dump of string
-  | File of string
   | Dir of string
 
-type t =
-  { mutable outfile : string option
-  ; mutable outgolint : string option
-  ; mutable out_rdjsonl : string option
-        (* Spec: https://github.com/reviewdog/reviewdog/tree/master/proto/rdf#rdjson *)
-  ; mutable mode : mode
-        (* Below options to manage file paths. Not sure are they really required *)
-  ; mutable workspace : string option
-  ; mutable prefix_to_cut : string option
-  ; mutable prefix_to_add : string option
-  ; mutable extra_includes : string list
-  ; mutable verbose : bool
-  }
+  type t =
+    { mutable outfile : string option
+    ; mutable outgolint : string option
+    ; mutable out_rdjsonl : string option
+          (* Spec: https://github.com/reviewdog/reviewdog/tree/master/proto/rdf#rdjson *)
+    ; mutable mode : mode
+          (* Below options to manage file paths. Not sure are they really required *)
+    ; mutable workspace : string option
+    ; mutable prefix_to_cut : string option
+    ; mutable prefix_to_add : string option
+    ; mutable extra_includes : string list
+    ; mutable verbose : bool
+    }
 
-let opts =
-  { outfile = None
-  ; outgolint = None
-  ; out_rdjsonl = None
-  ; mode = Unspecified
-  ; workspace = None
-  ; prefix_to_cut = Some "_build/default/"
-  ; prefix_to_add = None
-  ; extra_includes = []
-  ; verbose = false
-  }
-;;
+  let opts =
+    { outfile = None
+    ; outgolint = None
+    ; out_rdjsonl = None
+    ; mode = Unspecified
+    ; workspace = None
+    ; prefix_to_cut = Some "_build/default/"
+    ; prefix_to_add = None
+    ; extra_includes = []
+    ; verbose = false
+    }
+  ;;
 
 let mode () = opts.mode
 let set_mode m = opts.mode <- m
-let set_dump_file s = set_mode (Dump s)
-let set_in_file s = set_mode (File s)
 let set_in_dir s = set_mode (Dir s)
 let add_include s = opts.extra_includes <- s :: opts.extra_includes
 let set_out_file s = opts.outfile <- Some s
@@ -49,15 +45,10 @@ let set_prefix_to_add s = opts.prefix_to_add <- Some s
 let includes () = opts.extra_includes
 let prefix_to_cut () = opts.prefix_to_cut
 let prefix_to_add () = opts.prefix_to_add
-(* let dump_file () = opts.dump_file *)
 
 let outfile () = opts.outfile
 let out_golint () = opts.outgolint
 let out_rdjsonl () = opts.out_rdjsonl
-
-(* let infile () = opts.infile *)
-(* let set_in_file s = opts.infile <- s *)
-(* let set_dump_file s = opts.dump_file <- Some s *)
 let verbose () = opts.verbose
 let set_verbose () = opts.verbose <- true
 
@@ -82,20 +73,15 @@ let recover_filepath filepath =
 let parse_args () =
   let open Caml in
   Arg.parse
-    [ "-o", Arg.String set_out_file, "Set Markdown output file"
-    ; "-dir", Arg.String set_in_dir, "Set root directory of dune project"
-    ; "-ogolint", Arg.String set_out_golint, "Set output file in golint format"
-    ; "-ordjsonl", Arg.String set_out_rdjsonl, "Set output file in rdjsonl format"
-    ; "-ws", Arg.String set_workspace, "Set dune workspace root"
-    ; "-del-prefix", Arg.String set_prefix_to_cut, "Set prefix to cut from file names"
-    ; "-add-prefix", Arg.String set_prefix_to_add, "Set prefix to reprend to file names"
-    ; ( "-dump-lints"
-      , Arg.String set_dump_file
-      , "Dump information about available linters to JSON" )
-    ; "-I", Arg.String add_include, "Add extra include path for type checking"
-    ; "-v", Arg.Unit set_verbose, "More verbose output"
-    ]
-    set_in_file
-    "Calling [mylinter FILES] runs untyped checks on specified files. Use [-dir PATH] \
-     switch to check dune-based project"
+  [ "-o", Arg.String set_out_file, "Set Markdown output file"
+  ; "-ogolint", Arg.String set_out_golint, "Set output file in golint format"
+  ; "-ordjsonl", Arg.String set_out_rdjsonl, "Set output file in rdjsonl format"
+  ; "-ws", Arg.String set_workspace, "Set dune workspace root"
+  ; "-del-prefix", Arg.String set_prefix_to_cut, "Set prefix to cut from file names"
+  ; "-add-prefix", Arg.String set_prefix_to_add, "Set prefix to reprend to file names"
+  ; "-I", Arg.String add_include, "Add extra include path for type checking"
+  ; "-v", Arg.Unit set_verbose, "More verbose output"
+  ]
+  set_in_dir
+  "Set root directory of dune project"
 ;;

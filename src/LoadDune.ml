@@ -43,7 +43,7 @@ let fine_module { impl } =
   | _ -> true
 ;;
 
-let analyze_dir ~untyped:analyze_untyped ~cmt:analyze_cmt ~cmti:analyze_cmti path =
+let analyze_dir ~cmt:analyze_cmt ~cmti:analyze_cmti path =
   Unix.chdir path;
   let s =
     let ch = Unix.open_process_in "dune describe" in
@@ -59,10 +59,6 @@ let analyze_dir ~untyped:analyze_untyped ~cmt:analyze_cmt ~cmti:analyze_cmti pat
         | _ -> None)
   in
   let on_module _ m =
-    (* we analyze syntax tree without expanding syntax extensions *)
-    Option.iter m.impl ~f:analyze_untyped;
-    Option.iter m.intf ~f:analyze_untyped;
-    (* Now analyze Typedtree extracted from cmt[i] *)
     let on_cmti source_file (_cmi_info, cmt_info) =
       Option.iter cmt_info ~f:(fun cmt ->
           match cmt.Cmt_format.cmt_annots with
@@ -89,8 +85,8 @@ let analyze_dir ~untyped:analyze_untyped ~cmt:analyze_cmt ~cmti:analyze_cmti pat
               then (fun f ->
                 Unix.chdir build_dir;
                 let infos =
-                  if Config.verbose ()
-                  then printfn "Reading cmt[i] file '%s'" cmt_filename;
+                  (*if Config.verbose ()
+                  then printfn "Reading cmt[i] file '%s'" cmt_filename;*)
                   Cmt_format.read
                     (String.drop_prefix cmt_filename (String.length build_dir))
                 in
